@@ -280,7 +280,7 @@ private Vertice<T> findOrigem(Aresta<T> aresta, ArrayList<Vertice<T>> vertices) 
         }
     }
     
-    public float calcularDistancia(T origem, T destino) {
+    public float calcDistance(T origem, T destino) {
         Vertice<T> verticeOrigem = obterVertice(origem);
         Vertice<T> verticeDestino = obterVertice(destino);
 
@@ -297,7 +297,7 @@ private Vertice<T> findOrigem(Aresta<T> aresta, ArrayList<Vertice<T>> vertices) 
         throw new IllegalArgumentException("Não existe uma aresta conectando as duas cidades.");
     }
     
-    public void calcularCaminhoMinimo(T origem, T destino, JTextArea resultField) {
+    public void calcMinRoute(T origem, T destino, JTextArea resultField) {
         Vertice<T> verticeOrigem = obterVertice(origem);
         Vertice<T> verticeDestino = obterVertice(destino);
 
@@ -351,6 +351,11 @@ private Vertice<T> findOrigem(Aresta<T> aresta, ArrayList<Vertice<T>> vertices) 
 
                 resultField.setText(resultado.toString());
  
+    }
+    
+        // Verifica se o grafo está vazio.
+    public boolean checkIsEmpty() {
+        return vertices.isEmpty();
     }
     
     

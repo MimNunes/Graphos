@@ -35,4 +35,8 @@ public class Aresta<T> {
     public String toString() {
         return destino.getValor() + "; peso: " + this.peso;
     }
+
+    public Vertice<String> getOrigem() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

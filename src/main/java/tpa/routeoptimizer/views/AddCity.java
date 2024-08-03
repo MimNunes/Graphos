@@ -18,6 +18,8 @@ public class AddCity extends javax.swing.JFrame {
      * Creates new form AddCity
      */
     public AddCity(Grafo newGrafo) {
+        setUndecorated(true);
+
         initComponents();
         this.setLocationRelativeTo(null);
 
@@ -53,7 +55,7 @@ public class AddCity extends javax.swing.JFrame {
             }
         });
 
-        cancelButton.setText("Cancelar");
+        cancelButton.setText("Voltar");
         cancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cancelButtonMouseClicked(evt);

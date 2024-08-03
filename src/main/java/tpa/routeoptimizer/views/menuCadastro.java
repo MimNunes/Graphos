@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package tpa.routeoptimizer.views;
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,15 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
-import tpa.routeoptimizer.app.Aluno;
-import tpa.routeoptimizer.app.ComparadorAlunoPorMatricula;
-import tpa.routeoptimizer.app.ComparadorAlunoPorNome;
-import tpa.routeoptimizer.app.ComparadorDisciplinaPorCodigo;
-import tpa.routeoptimizer.app.Disciplina;
-import tpa.routeoptimizer.app.GeradorDeArvores;
+import javax.swing.border.LineBorder;
 import tpa.routeoptimizer.lib.Aresta;
-import tpa.routeoptimizer.lib.ArvoreBinaria;
-import tpa.routeoptimizer.lib.IArvoreBinaria;
 import tpa.routeoptimizer.lib.Grafo;
 import tpa.routeoptimizer.lib.Vertice;
 /**
@@ -28,17 +22,12 @@ import tpa.routeoptimizer.lib.Vertice;
  */
 
 public class menuCadastro extends javax.swing.JFrame {
-    public ArvoreBinaria arvoreBinariaAluno;
-    public ArvoreBinaria arvoreBinariaDisciplina;
     public Grafo<String> grafo;
 
     public AddCity addCity;
     public AddRoute addRoute;
     public DistanceBetweenCitys distanceBetweenCitys;
-
-    public CadastroDisciplina cadastroDisciplina;
-    public ConsultaAluno consultaAluno;
-    public ConsultaDisciplina consultaDisciplina;
+    public WarningPopup warningPopup;
 
     /**
      * Creates new form menuCadastro
@@ -48,44 +37,10 @@ public class menuCadastro extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         
-        // Instancio um comparador de alunos por matricula (também fornecido)
-        ComparadorAlunoPorMatricula compPorMatricula = new ComparadorAlunoPorMatricula();
-        ComparadorDisciplinaPorCodigo compPorCodigo = new ComparadorDisciplinaPorCodigo();
-
-        // TO DO ADD LISTA DE 
-        // ------Início do trecho a ser considerado nas questões 1, 2 e 3 do
-        // relatório-------------------------------
-        // Instancio uma árvore binária. Lembre de ajustar o import para sua classe de
-        // árvore binária
-        arvoreBinariaAluno = new ArvoreBinaria(compPorMatricula);
-        arvoreBinariaDisciplina = new ArvoreBinaria(compPorCodigo);
-        
         grafo = new Grafo<>();
         graphVizualizeField.setVisible(false);
-        /*
-        Aluno aluno1 = new Aluno(123, "lorran");
-        Aluno aluno2 = new Aluno(1, "yasmim");
-        Aluno aluno3 = new Aluno(147, "fernanda");
-
-        arvoreBinariaAluno.adicionar(aluno1);
-        arvoreBinariaAluno.adicionar(aluno2);
-        arvoreBinariaAluno.adicionar(aluno3);
-
-        Disciplina diciplina1 = new Disciplina(1, "TGA", 30);
-        Disciplina diciplina2 = new Disciplina(2, "TGS", 30);
-        Disciplina diciplina3 = new Disciplina(3, "Analise de sistemas", 30);
-        Disciplina diciplina4 = new Disciplina(4, "Comunicacao empresarial", 30);
-        Disciplina diciplina5 = new Disciplina(5, "Estrutura de Dados", 30);
-        
-        diciplina1.setPrerequisitos(2);
-        diciplina1.setPrerequisitos(4);
-
-        arvoreBinariaDisciplina.adicionar(diciplina1);
-        arvoreBinariaDisciplina.adicionar(diciplina2);
-        arvoreBinariaDisciplina.adicionar(diciplina3);
-        arvoreBinariaDisciplina.adicionar(diciplina4);
-        arvoreBinariaDisciplina.adicionar(diciplina5);
-        */
+        warningPopup = new WarningPopup();
+        warningPopup.setVisible(false);
     }
 
     /**
@@ -102,15 +57,15 @@ public class menuCadastro extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         addCityButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
-        jButton1 = new javax.swing.JButton();
         calcDistButton = new javax.swing.JButton();
+        calcNewAgm = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         fileField = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        uploadFileButton = new javax.swing.JButton();
         feedbackLabel = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         graphVizualizeField = new javax.swing.JTextArea();
-        jButton3 = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
         saveGraphButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -129,11 +84,6 @@ public class menuCadastro extends javax.swing.JFrame {
         calcAGMButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 calcAGMButtonMouseClicked(evt);
-            }
-        });
-        calcAGMButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                calcAGMButtonActionPerformed(evt);
             }
         });
 
@@ -167,23 +117,9 @@ public class menuCadastro extends javax.swing.JFrame {
                 addCityButtonMouseClicked(evt);
             }
         });
-        addCityButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addCityButtonActionPerformed(evt);
-            }
-        });
 
         jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
-
-        jButton1.setIcon(UIManager.getIcon("FileChooser.homeFolderIcon"));
-        jButton1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jButton1.setBorderPainted(false);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
 
         calcDistButton.setBackground(new java.awt.Color(0, 0, 0));
         calcDistButton.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
@@ -194,9 +130,14 @@ public class menuCadastro extends javax.swing.JFrame {
                 calcDistButtonMouseClicked(evt);
             }
         });
-        calcDistButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                calcDistButtonActionPerformed(evt);
+
+        calcNewAgm.setBackground(new java.awt.Color(0, 0, 0));
+        calcNewAgm.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        calcNewAgm.setForeground(new java.awt.Color(255, 255, 255));
+        calcNewAgm.setText("Calcula Distancia");
+        calcNewAgm.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                calcNewAgmMouseClicked(evt);
             }
         });
 
@@ -211,13 +152,9 @@ public class menuCadastro extends javax.swing.JFrame {
                     .addComponent(addRouteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(addCityButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator1)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(calcDistButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(calcAGMButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(calcAGMButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(calcNewAgm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -227,9 +164,7 @@ public class menuCadastro extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(64, 64, 64)
                 .addComponent(addCityButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(addRouteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -237,15 +172,17 @@ public class menuCadastro extends javax.swing.JFrame {
                 .addComponent(calcAGMButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(calcDistButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(calcNewAgm, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         fileField.setText("entrada.txt");
 
-        jButton2.setText("Carregar arquivo...");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        uploadFileButton.setText("Carregar arquivo...");
+        uploadFileButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton2MouseClicked(evt);
+                uploadFileButtonMouseClicked(evt);
             }
         });
 
@@ -254,10 +191,10 @@ public class menuCadastro extends javax.swing.JFrame {
         graphVizualizeField.setRows(5);
         jScrollPane1.setViewportView(graphVizualizeField);
 
-        jButton3.setText("Atualizar");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+        refreshButton.setText("Atualizar");
+        refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton3MouseClicked(evt);
+                refreshButtonMouseClicked(evt);
             }
         });
 
@@ -281,11 +218,11 @@ public class menuCadastro extends javax.swing.JFrame {
                         .addGap(50, 50, 50)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton3)
+                            .addComponent(refreshButton)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(fileField, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(51, 51, 51)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(uploadFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(saveGraphButton, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(166, 166, 166)))))
@@ -297,12 +234,12 @@ public class menuCadastro extends javax.swing.JFrame {
                 .addGap(101, 101, 101)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fileField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(uploadFileButton, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(saveGraphButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(47, 47, 47)
                 .addComponent(feedbackLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 506, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46))
@@ -326,99 +263,107 @@ public class menuCadastro extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void addRouteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRouteButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addRouteButtonActionPerformed
-
-    private void calcAGMButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcAGMButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_calcAGMButtonActionPerformed
-
-    private void addCityButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCityButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addCityButtonActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add   your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void calcDistButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_calcDistButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_calcDistButtonActionPerformed
-
     private void addCityButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addCityButtonMouseClicked
-        addCity = new AddCity(grafo);
-        addCity.setVisible(true);
+        if (grafo.checkIsEmpty()) {
+            warningPopup.setVisible(true);
+            uploadFileButton.setBorder(new LineBorder(Color.RED, 2)); 
+        }else{
+            addCity = new AddCity(grafo);
+            addCity.setVisible(true);   
+        }
+
     }//GEN-LAST:event_addCityButtonMouseClicked
 
     private void calcAGMButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calcAGMButtonMouseClicked
-        graphVizualizeField.setVisible(true);
-        graphVizualizeField.setText(grafo.calcularAGM());
+        if (grafo.checkIsEmpty()) {
+            warningPopup.setVisible(true);
+            uploadFileButton.setBorder(new LineBorder(Color.RED, 2)); 
+
+        }else{
+            graphVizualizeField.setVisible(true);
+            graphVizualizeField.setText(grafo.calcularAGM());
+        }
     }//GEN-LAST:event_calcAGMButtonMouseClicked
 
     private void addRouteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addRouteButtonMouseClicked
-        addRoute = new AddRoute(grafo);
-        addRoute.setVisible(true);
+        if (grafo.checkIsEmpty()) {
+            warningPopup.setVisible(true);
+            uploadFileButton.setBorder(new LineBorder(Color.RED, 2)); 
+
+        }else{
+            addRoute = new AddRoute(grafo);
+            addRoute.setVisible(true);
+        }
     }//GEN-LAST:event_addRouteButtonMouseClicked
 
     private void calcDistButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calcDistButtonMouseClicked
-        distanceBetweenCitys = new DistanceBetweenCitys(grafo);
-        distanceBetweenCitys.setVisible(true);
+        if (grafo.checkIsEmpty()) {
+            warningPopup.setVisible(true);
+            uploadFileButton.setBorder(new LineBorder(Color.RED, 2)); 
+
+        }else{
+            distanceBetweenCitys = new DistanceBetweenCitys(grafo);
+            distanceBetweenCitys.setVisible(true);
+        }
     }//GEN-LAST:event_calcDistButtonMouseClicked
 
-    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-        String fileName = this.fileField.getText();
-        String relativePath = "src/" + fileName;
-        File file = new File(relativePath);
+    private void uploadFileButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_uploadFileButtonMouseClicked
+        
+        if (grafo.checkIsEmpty()){
+            String fileName = this.fileField.getText();
+            String relativePath = "src/" + fileName;
+            File file = new File(relativePath);
+            uploadFileButton.setBorder(UIManager.getBorder("Button.border"));
 
-        String absolutePath = file.getAbsolutePath();
+            String absolutePath = file.getAbsolutePath();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(absolutePath))) {
-            int numCidades = Integer.parseInt(reader.readLine().trim());
+            try (BufferedReader reader = new BufferedReader(new FileReader(absolutePath))) {
+                int numCidades = Integer.parseInt(reader.readLine().trim());
 
-            ArrayList<String> cidades = new ArrayList<>();
-            for (int i = 0; i < numCidades; i++) {
-                cidades.add(reader.readLine().trim().toLowerCase());
-            }
-            
-          
-            for (String cidade : cidades) {
-                System.out.println(cidade);
-                grafo.adicionarVertice(cidade);
-            }
-            float[][] matrizAdjacencia = new float[numCidades][numCidades];
-            for (int i = 0; i < numCidades; i++) {
-                String[] valores = reader.readLine().split(",");
-                for (int j = 0; j < numCidades; j++) {
-                    matrizAdjacencia[i][j] = Float.parseFloat(valores[j].trim());
+                ArrayList<String> cidades = new ArrayList<>();
+                for (int i = 0; i < numCidades; i++) {
+                    cidades.add(reader.readLine().trim().toLowerCase());
                 }
-            }
 
-            for (int i = 0; i < numCidades; i++) {
-                for (int j = 0; j < numCidades; j++) {
-                    if (matrizAdjacencia[i][j] > 0) {
-                        grafo.adicionarAresta(cidades.get(i), cidades.get(j), matrizAdjacencia[i][j]);
+
+                for (String cidade : cidades) {
+                    System.out.println(cidade);
+                    grafo.adicionarVertice(cidade);
+                }
+                float[][] matrizAdjacencia = new float[numCidades][numCidades];
+                for (int i = 0; i < numCidades; i++) {
+                    String[] valores = reader.readLine().split(",");
+                    for (int j = 0; j < numCidades; j++) {
+                        matrizAdjacencia[i][j] = Float.parseFloat(valores[j].trim());
                     }
                 }
-            }
-            feedbackLabel.setText("Grapho carregado com sucesso!");
-            graphVizualizeField.setVisible(true);
 
-            String graphVizualizer = grafo.imprimirGrafo();
-            graphVizualizeField.setText(graphVizualizer);
-            
-        } catch (IOException e) {
-            feedbackLabel.setText("Ocorreu um erro ao abrir o arquivo: "+absolutePath );
-            graphVizualizeField.setVisible(false);
+                for (int i = 0; i < numCidades; i++) {
+                    for (int j = 0; j < numCidades; j++) {
+                        if (matrizAdjacencia[i][j] > 0) {
+                            grafo.adicionarAresta(cidades.get(i), cidades.get(j), matrizAdjacencia[i][j]);
+                        }
+                    }
+                }
+                feedbackLabel.setText("Grapho carregado com sucesso!");
+                graphVizualizeField.setVisible(true);
+
+                String graphVizualizer = grafo.imprimirGrafo();
+                graphVizualizeField.setText(graphVizualizer);
+
+            } catch (IOException e) {
+                feedbackLabel.setText("Ocorreu um erro ao abrir o arquivo: "+absolutePath );
+                graphVizualizeField.setVisible(false);
+            }   
         }
-    }//GEN-LAST:event_jButton2MouseClicked
+    }//GEN-LAST:event_uploadFileButtonMouseClicked
 
-    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+    private void refreshButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshButtonMouseClicked
         graphVizualizeField.setVisible(true);
 
         String graphVizualizer = grafo.imprimirGrafo();
         graphVizualizeField.setText(graphVizualizer);
-    }//GEN-LAST:event_jButton3MouseClicked
+    }//GEN-LAST:event_refreshButtonMouseClicked
 
     private void saveGraphButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveGraphButtonMouseClicked
         // TODO add your handling code here:
@@ -471,6 +416,14 @@ public class menuCadastro extends javax.swing.JFrame {
             feedbackLabel.setText("Ocorreu um erro ao salvar o arquivo: " + absolutePath);
         }
     }//GEN-LAST:event_saveGraphButtonMouseClicked
+
+    private void addRouteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addRouteButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addRouteButtonActionPerformed
+
+    private void calcNewAgmMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calcNewAgmMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_calcNewAgmMouseClicked
    
     /**
      * @param args the command line arguments
@@ -512,21 +465,19 @@ public class menuCadastro extends javax.swing.JFrame {
     private javax.swing.JButton addRouteButton;
     private javax.swing.JButton calcAGMButton;
     private javax.swing.JButton calcDistButton;
+    private javax.swing.JButton calcNewAgm;
     private javax.swing.JLabel feedbackLabel;
     private javax.swing.JTextField fileField;
     private javax.swing.JTextArea graphVizualizeField;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JButton saveGraphButton;
+    private javax.swing.JButton uploadFileButton;
     // End of variables declaration//GEN-END:variables
 
-    private CadastroAluno CadastroAluno() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+
 }

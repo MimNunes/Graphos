@@ -4,6 +4,7 @@
  */
 package tpa.routeoptimizer.views;
 
+import java.util.ArrayList;
 import tpa.routeoptimizer.lib.Grafo;
 
 /**
@@ -13,15 +14,24 @@ import tpa.routeoptimizer.lib.Grafo;
 public class AddRoute extends javax.swing.JFrame {
 
     Grafo grapho;
+    boolean is_combo = false;
 
     /**
      * Creates new form AddCity
      */
     public AddRoute(Grafo newGrafo) {
+        setUndecorated(true);
+
         initComponents();
         this.setLocationRelativeTo(null);
 
         grapho = newGrafo;
+        ArrayList<String> cidades = grapho.obterVertices();
+        
+        for (String cidade : cidades) {
+            originComboBox.addItem(cidade);
+            destinyComboBox.addItem(cidade);
+        }
     }
 
     /**
@@ -37,17 +47,24 @@ public class AddRoute extends javax.swing.JFrame {
         addCityButton = new javax.swing.JButton();
         cityOriginNameField = new javax.swing.JTextField();
         cancelButton = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        destinyLabel = new javax.swing.JLabel();
         feedBackField = new javax.swing.JLabel();
         cityDestinyNameField = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        originLabel = new javax.swing.JLabel();
         distanceField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
+        switchSelecMethodButton = new javax.swing.JButton();
+        originComboBox = new javax.swing.JComboBox<>();
+        destinyComboBox = new javax.swing.JComboBox<>();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Liberation Sans", 0, 24)); // NOI18N
         jLabel1.setText("Addicionar Rota");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 46, 238, 39));
 
         addCityButton.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         addCityButton.setText("+");
@@ -56,90 +73,55 @@ public class AddRoute extends javax.swing.JFrame {
                 addCityButtonMouseClicked(evt);
             }
         });
+        getContentPane().add(addCityButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 240, 67, 52));
+        getContentPane().add(cityOriginNameField, new org.netbeans.lib.awtextra.AbsoluteConstraints(47, 169, 242, 40));
 
-        cancelButton.setText("Cancelar");
+        cancelButton.setText("Voltar");
         cancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cancelButtonMouseClicked(evt);
             }
         });
+        getContentPane().add(cancelButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(417, 318, 121, 34));
 
-        jLabel2.setText("Digite a cidade de destino");
+        destinyLabel.setText("Digite a cidade de destino");
+        getContentPane().add(destinyLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 250, 214, -1));
+        getContentPane().add(feedBackField, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 190, 269, 28));
+        getContentPane().add(cityDestinyNameField, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 290, 242, 45));
 
-        jLabel3.setText("Digite a cidade de origem:");
+        originLabel.setText("Digite a cidade de origem:");
+        getContentPane().add(originLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(57, 132, 214, -1));
+        getContentPane().add(distanceField, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 400, 242, 45));
 
         jLabel4.setText("Distancia:");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 360, 214, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(192, 192, 192)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(47, 47, 47)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(289, 289, 289)
-                                .addComponent(feedBackField, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(cityDestinyNameField, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(cityOriginNameField, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(distanceField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE))
-                                .addGap(110, 110, 110)
-                                .addComponent(addCityButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(67, 67, 67)))))
-                .addContainerGap(28, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(57, 57, 57)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(362, Short.MAX_VALUE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(46, 46, 46)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(feedBackField, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cityOriginNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addCityButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(cityDestinyNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(distanceField, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(132, 132, 132)
-                    .addComponent(jLabel3)
-                    .addContainerGap(278, Short.MAX_VALUE)))
-        );
+        switchSelecMethodButton.setText("Alterar metodo de seleção");
+        switchSelecMethodButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                switchSelecMethodButtonMouseClicked(evt);
+            }
+        });
+        getContentPane().add(switchSelecMethodButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 130, 210, 30));
+        getContentPane().add(originComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 170, 230, 40));
+        getContentPane().add(destinyComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 290, 230, 30));
+        getContentPane().add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 470, 480, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void addCityButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addCityButtonMouseClicked
-        String cityOrigin = cityOriginNameField.getText();
-        String cityDestiny = cityDestinyNameField.getText();
+        String cityOrigin;
+        String cityDestiny;
+
+        if (is_combo) {
+            cityOrigin = ((String) originComboBox.getSelectedItem());
+            cityDestiny = ((String) destinyComboBox.getSelectedItem());
+        }
+        else{
+            cityOrigin = cityOriginNameField.getText().toLowerCase().trim();
+            cityDestiny = cityDestinyNameField.getText().toLowerCase().trim();
+        }
         String distance = distanceField.getText();
 
         if (cityOrigin != null && !cityOrigin.trim().isEmpty()) {
@@ -181,6 +163,27 @@ public class AddRoute extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_cancelButtonMouseClicked
 
+    private void switchSelecMethodButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_switchSelecMethodButtonMouseClicked
+          if(!is_combo){
+              is_combo = true;
+              cityDestinyNameField.setVisible(false);
+              cityOriginNameField.setVisible(false);
+              destinyComboBox.setVisible(true);
+              originComboBox.setVisible(true);
+              destinyLabel.setText("Selecione uma cidade de destino:");
+              originLabel.setText("Selecione uma cidade de origem:");
+
+          }else{
+            is_combo = false;
+            cityDestinyNameField.setVisible(true);
+            cityOriginNameField.setVisible(true);
+            destinyComboBox.setVisible(false);
+            originComboBox.setVisible(false);
+            destinyLabel.setText("Digite uma cidade de destino:");
+            originLabel.setText("Digite uma cidade de origem:");
+          }        // TODO add your handling code here:
+    }//GEN-LAST:event_switchSelecMethodButtonMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -216,11 +219,15 @@ public class AddRoute extends javax.swing.JFrame {
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextField cityDestinyNameField;
     private javax.swing.JTextField cityOriginNameField;
+    private javax.swing.JComboBox<String> destinyComboBox;
+    private javax.swing.JLabel destinyLabel;
     private javax.swing.JTextField distanceField;
     private javax.swing.JLabel feedBackField;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JComboBox<String> originComboBox;
+    private javax.swing.JLabel originLabel;
+    private javax.swing.JButton switchSelecMethodButton;
     // End of variables declaration//GEN-END:variables
 }
