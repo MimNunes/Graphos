@@ -27,6 +27,7 @@ public class menuCadastro extends javax.swing.JFrame {
     public AddCity addCity;
     public AddRoute addRoute;
     public DistanceBetweenCitys distanceBetweenCitys;
+
     public WarningPopup warningPopup;
 
     /**
@@ -58,7 +59,7 @@ public class menuCadastro extends javax.swing.JFrame {
         addCityButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         calcDistButton = new javax.swing.JButton();
-        calcNewAgm = new javax.swing.JButton();
+        calcDistanceAGM = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         fileField = new javax.swing.JTextField();
         uploadFileButton = new javax.swing.JButton();
@@ -131,13 +132,13 @@ public class menuCadastro extends javax.swing.JFrame {
             }
         });
 
-        calcNewAgm.setBackground(new java.awt.Color(0, 0, 0));
-        calcNewAgm.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        calcNewAgm.setForeground(new java.awt.Color(255, 255, 255));
-        calcNewAgm.setText("Calcula Distancia");
-        calcNewAgm.addMouseListener(new java.awt.event.MouseAdapter() {
+        calcDistanceAGM.setBackground(new java.awt.Color(0, 0, 0));
+        calcDistanceAGM.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        calcDistanceAGM.setForeground(new java.awt.Color(255, 255, 255));
+        calcDistanceAGM.setText("Calcula Distancia AGM");
+        calcDistanceAGM.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                calcNewAgmMouseClicked(evt);
+                calcDistanceAGMMouseClicked(evt);
             }
         });
 
@@ -154,7 +155,7 @@ public class menuCadastro extends javax.swing.JFrame {
                     .addComponent(jSeparator1)
                     .addComponent(calcDistButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(calcAGMButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(calcNewAgm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(calcDistanceAGM, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -169,11 +170,11 @@ public class menuCadastro extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(addRouteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(calcAGMButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(calcDistButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(calcNewAgm, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(calcAGMButton, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(calcDistanceAGM, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -271,7 +272,6 @@ public class menuCadastro extends javax.swing.JFrame {
             addCity = new AddCity(grafo);
             addCity.setVisible(true);   
         }
-
     }//GEN-LAST:event_addCityButtonMouseClicked
 
     private void calcAGMButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calcAGMButtonMouseClicked
@@ -281,7 +281,9 @@ public class menuCadastro extends javax.swing.JFrame {
 
         }else{
             graphVizualizeField.setVisible(true);
-            graphVizualizeField.setText(grafo.calcularAGM());
+            Grafo graphAGM = grafo.criarGrafoAGM();;
+            graphVizualizeField.setText(graphAGM.formatarResultadoAGM(graphAGM));
+            //graphVizualizeField.setText(grafo.calcularAGMStr());
         }
     }//GEN-LAST:event_calcAGMButtonMouseClicked
 
@@ -375,7 +377,7 @@ public class menuCadastro extends javax.swing.JFrame {
         String absolutePath = file.getAbsolutePath();
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(absolutePath))) {
-            ArrayList<String> vertices = grafo.obterVertices();
+            ArrayList<String> vertices = grafo.obterVerticesValues();
             int numCidades = vertices.size();
 
             // Escreve o número de cidades
@@ -421,9 +423,17 @@ public class menuCadastro extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_addRouteButtonActionPerformed
 
-    private void calcNewAgmMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calcNewAgmMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_calcNewAgmMouseClicked
+    private void calcDistanceAGMMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_calcDistanceAGMMouseClicked
+                // TODO add your handling code here:
+        if (grafo.checkIsEmpty()) {
+            warningPopup.setVisible(true);
+            uploadFileButton.setBorder(new LineBorder(Color.RED, 2)); 
+        }else{
+            Grafo graphAGM = grafo.criarGrafoAGM();
+            distanceBetweenCitys = new DistanceBetweenCitys(graphAGM);
+            distanceBetweenCitys.setVisible(true);
+        }
+    }//GEN-LAST:event_calcDistanceAGMMouseClicked
    
     /**
      * @param args the command line arguments
@@ -465,7 +475,7 @@ public class menuCadastro extends javax.swing.JFrame {
     private javax.swing.JButton addRouteButton;
     private javax.swing.JButton calcAGMButton;
     private javax.swing.JButton calcDistButton;
-    private javax.swing.JButton calcNewAgm;
+    private javax.swing.JButton calcDistanceAGM;
     private javax.swing.JLabel feedbackLabel;
     private javax.swing.JTextField fileField;
     private javax.swing.JTextArea graphVizualizeField;

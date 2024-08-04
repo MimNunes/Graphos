@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Stack;
 import javax.swing.JTextArea;
 
@@ -23,10 +25,18 @@ public class Grafo<T> implements IGrafo<T> {
         return novo;
     }
 
-    public ArrayList<T> obterVertices() {
+    public ArrayList<T> obterVerticesValues() {
         ArrayList<T> nomesVertices = new ArrayList<>();
         for (Vertice<T> vertice : vertices) {
             nomesVertices.add(vertice.getValor());
+        }
+        return nomesVertices;
+    }
+    
+    public ArrayList<T> obterVertices() {
+        ArrayList<T> nomesVertices = new ArrayList<>();
+        for (Vertice<T> vertice : vertices) {
+            nomesVertices.add((T) vertice);
         }
         return nomesVertices;
     }
@@ -55,7 +65,11 @@ public class Grafo<T> implements IGrafo<T> {
             verticeDestino = adicionarVertice(destino);
         }
 
-        verticeOrigem.adicionarDestino(new Aresta<>(verticeDestino, peso));
+        // Cria a aresta com origem e destino
+        Aresta<T> aresta = new Aresta<>(verticeOrigem, verticeDestino, peso);
+
+        // Adiciona a aresta à lista de destinos do vértice de origem
+        verticeOrigem.adicionarDestino(aresta);
     }
 
     // Realiza uma busca em largura no grafo a partir do primeiro vértice adicionado.
@@ -127,6 +141,7 @@ public class Grafo<T> implements IGrafo<T> {
     }
 
     // Executa uma ordenação topológica do grafo.
+    @Override
     public ArrayList<Vertice<T>> ordenacaoTopologica() {
         ArrayList<Vertice<T>> resultado = new ArrayList<>();
         Stack<Vertice<T>> pilha = new Stack<>();
@@ -163,99 +178,154 @@ public class Grafo<T> implements IGrafo<T> {
     
     public String imprimirGrafo() {
         StringBuilder sb = new StringBuilder();
-        
+
+        // Cria um conjunto para rastrear as arestas já adicionadas e evitar duplicatas
+        Set<String> arestasAdicionadas = new HashSet<>();
+
+        // Itera sobre todos os vértices do grafo
         for (Vertice<T> vertice : vertices) {
-            // Adiciona o valor do vértice
-            sb.append(vertice.getValor().toString()).append(":\t");
-            
-            // Adiciona as arestas e pesos
-            ArrayList<Aresta<T>> destinos = vertice.getDestinos();
-            for (Aresta<T> aresta : destinos) {
-                sb.append(aresta.getDestino().getValor().toString())
-                  .append(" (peso: ").append(aresta.getPeso()).append(")\t");
+            // Itera sobre todas as arestas do vértice
+            for (Aresta<T> aresta : vertice.getDestinos()) {
+                Vertice<T> destino = aresta.getDestino();
+                // Cria uma string única para a aresta para evitar duplicatas
+                String arestaString = vertice.getValor().toString() + "-" + destino.getValor().toString();
+                String arestaStringReversa = destino.getValor().toString() + "-" + vertice.getValor().toString();
+
+                if (!arestasAdicionadas.contains(arestaString) && !arestasAdicionadas.contains(arestaStringReversa)) {
+                    // Adiciona a aresta ao resultado se ainda não foi adicionada
+                    sb.append("Aresta: ")
+                      .append(vertice.getValor().toString())
+                      .append(" - ")
+                      .append(destino.getValor().toString())
+                      .append(" - Peso: ")
+                      .append(aresta.getPeso())
+                      .append("\n");
+                    arestasAdicionadas.add(arestaString);
+                }
             }
-            
-            // Quebra de linha após cada vértice
-            sb.append("\n");
         }
-        
+
         return sb.toString();
     }
     
-public String calcularAGM() {
-    // Cria uma lista de arestas sem duplicatas
-    ArrayList<Aresta<T>> arestas = new ArrayList<>();
+    // Algoritmo de Kruskal
+    public ArrayList<Aresta<T>> calcularAGM() {
+        ArrayList<Aresta<T>> arestas = new ArrayList<>();
 
-    // Coleta todas as arestas de todos os vértices
-    for (Vertice<T> vertice : vertices) {
-        for (Aresta<T> aresta : vertice.getDestinos()) {
-            // Adiciona aresta à lista se ainda não foi adicionada
-            if (arestas.stream().noneMatch(a ->
-                (a.getDestino().equals(aresta.getDestino()) && a.getPeso() == aresta.getPeso()) ||
-                (a.getDestino().equals(vertice) && a.getPeso() == aresta.getPeso())
-            )) {
-                arestas.add(aresta);
+        // Coleta todas as arestas de todos os vértices
+        for (Vertice<T> vertice : vertices) {
+            for (Aresta<T> aresta : vertice.getDestinos()) {
+                // Adiciona aresta à lista se ainda não foi adicionada
+                if (arestas.stream().noneMatch(a ->
+                    (a.getDestino().equals(aresta.getDestino()) && a.getPeso() == aresta.getPeso()) ||
+                    (a.getDestino().equals(vertice) && a.getPeso() == aresta.getPeso())
+                )) {
+                    arestas.add(aresta);
+                }
             }
         }
-    }
 
-    // Ordena as arestas pelo peso
-    Collections.sort(arestas, Comparator.comparingDouble(Aresta::getPeso));
+        // Ordena as arestas pelo peso
+        Collections.sort(arestas, Comparator.comparingDouble(Aresta::getPeso));
 
-    // Inicializa o conjunto disjunto
-    Map<Vertice<T>, Vertice<T>> pai = new HashMap<>();
-    Map<Vertice<T>, Integer> rank = new HashMap<>();
+        // Inicializa o conjunto disjunto
+        Map<Vertice<T>, Vertice<T>> pai = new HashMap<>();
+        Map<Vertice<T>, Integer> rank = new HashMap<>();
 
-    // Inicializa os conjuntos disjuntos para cada vértice
-    for (Vertice<T> vertice : vertices) {
-        pai.put(vertice, vertice);
-        rank.put(vertice, 0);
-    }
-
-    // Calcula a árvore geradora mínima e constrói a string
-    StringBuilder resultado = new StringBuilder();
-    float somaTotal = 0;
-    resultado.append("Árvore Geradora Mínima:\n");
-
-    for (Aresta<T> aresta : arestas) {
-        Vertice<T> origem = findOrigem(aresta, vertices);
-        Vertice<T> destino = aresta.getDestino();
-
-        Vertice<T> u = find(origem, pai);
-        Vertice<T> v = find(destino, pai);
-
-        if (!u.equals(v)) {
-            resultado.append("Aresta: ")
-                     .append(origem.getValor())
-                     .append(" - ")
-                     .append(destino.getValor())
-                     .append(" - Peso: ")
-                     .append(aresta.getPeso())
-                     .append("\n");
-            somaTotal += aresta.getPeso();
-            union(u, v, pai, rank);
+        // Inicializa os conjuntos disjuntos para cada vértice
+        for (Vertice<T> vertice : vertices) {
+            pai.put(vertice, vertice);
+            rank.put(vertice, 0);
         }
-    }
 
-    resultado.append("Soma total dos pesos: ")
-             .append(somaTotal)
-             .append("\n");
+        // Calcula a árvore geradora mínima
+        ArrayList<Aresta<T>> agm = new ArrayList<>();
+        for (Aresta<T> aresta : arestas) {
+            Vertice<T> origem = findOrigem(aresta, vertices);
+            Vertice<T> destino = aresta.getDestino();
 
-    return resultado.toString();
-}
+            Vertice<T> u = find(origem, pai);
+            Vertice<T> v = find(destino, pai);
 
-// Função para determinar o vértice de origem baseado na aresta
-private Vertice<T> findOrigem(Aresta<T> aresta, ArrayList<Vertice<T>> vertices) {
-    for (Vertice<T> vertice : vertices) {
-        for (Aresta<T> a : vertice.getDestinos()) {
-            if (a.getDestino().equals(aresta.getDestino()) && a.getPeso() == aresta.getPeso()) {
-                return vertice;
+            if (!u.equals(v)) {
+                agm.add(aresta);
+                union(u, v, pai, rank);
             }
         }
+
+        return agm;
     }
-    return null; // Retorne nulo ou lance uma exceção, se necessário
-}
-       // Função para encontrar o representante de um vértice
+
+    public Grafo<T> criarGrafoAGM() {
+        Grafo<T> novoGrafo = new Grafo<>();
+        ArrayList<Aresta<T>> arestasAGM = calcularAGM();
+
+        // Adiciona as arestas ao novo grafo e imprime
+        System.out.println("Arestas da AGM sendo adicionadas ao novo grafo:");
+        for (Aresta<T> aresta : arestasAGM) {
+            T origem = aresta.getOrigem().getValor(); // Obtém o valor do vértice de origem
+            T destino = aresta.getDestino().getValor(); // Obtém o valor do vértice de destino
+            float peso = aresta.getPeso(); // Obtém o peso da aresta
+
+            // Adiciona a aresta ao novo grafo
+            novoGrafo.adicionarAresta(origem, destino, peso);
+
+            // Imprime a aresta
+            System.out.println("Aresta: " + origem + " - " + destino + " - Peso: " + peso);
+        }
+
+        return novoGrafo;
+    }
+
+    public String formatarResultadoAGM(Grafo<T> grafoAGM) {
+        StringBuilder resultado = new StringBuilder();
+        float somaTotal = 0;
+        resultado.append("Árvore Geradora Mínima:\n");
+
+        // Obtenha a lista de vértices do grafo
+        ArrayList<Vertice> vertices = (ArrayList<Vertice>) grafoAGM.obterVertices();
+
+        // Crie um conjunto para rastrear as arestas já adicionadas e evitar duplicatas
+        Set<Aresta<T>> arestasAdicionadas = new HashSet<>();
+
+        // Itere sobre os vértices para obter as arestas
+        for (Vertice<T> vertice : vertices) {
+            for (Aresta<T> aresta : vertice.getDestinos()) {
+                // Adicione a aresta ao resultado se ainda não foi adicionada
+                if (!arestasAdicionadas.contains(aresta)) {
+                    resultado.append("Aresta: ")
+                             .append(aresta.getOrigem().getValor())
+                             .append(" - ")
+                             .append(aresta.getDestino().getValor())
+                             .append(" - Peso: ")
+                             .append(aresta.getPeso())
+                             .append("\n");
+                    somaTotal += aresta.getPeso();
+                    arestasAdicionadas.add(aresta);
+                }
+            }
+        }
+
+        resultado.append("Soma total dos pesos: ")
+                 .append(somaTotal)
+                 .append("\n");
+
+        return resultado.toString();
+    }
+
+    // Função para determinar o vértice de origem baseado na aresta
+    private Vertice<T> findOrigem(Aresta<T> aresta, ArrayList<Vertice<T>> vertices) {
+        for (Vertice<T> vertice : vertices) {
+            for (Aresta<T> a : vertice.getDestinos()) {
+                if (a.getDestino().equals(aresta.getDestino()) && a.getPeso() == aresta.getPeso()) {
+                    return vertice;
+                }
+            }
+        }
+        return null; // Retorne nulo ou lance uma exceção, se necessário
+    }
+    
+    // encontrar o representante de um vértice
     private Vertice<T> find(Vertice<T> vertice, Map<Vertice<T>, Vertice<T>> pai) {
         if (!pai.get(vertice).equals(vertice)) {
             pai.put(vertice, find(pai.get(vertice), pai));
@@ -263,10 +333,10 @@ private Vertice<T> findOrigem(Aresta<T> aresta, ArrayList<Vertice<T>> vertices) 
         return pai.get(vertice);
     }
 
-    // Função para unir dois conjuntos
+    // unir dois conjuntos
     private void union(Vertice<T> u, Vertice<T> v, Map<Vertice<T>, Vertice<T>> pai, Map<Vertice<T>, Integer> rank) {
-        Vertice<T> rootU = find(u, pai);
-        Vertice<T> rootV = find(v, pai);
+        Vertice<T> rootU = find(u, pai); // Encontrar a raiz do conjunto de u
+        Vertice<T> rootV = find(v, pai); // Encontrar a raiz do conjunto de v
 
         if (rootU.equals(rootV)) return;
 
@@ -276,9 +346,10 @@ private Vertice<T> findOrigem(Aresta<T> aresta, ArrayList<Vertice<T>> vertices) 
             pai.put(rootU, rootV);
         } else {
             pai.put(rootV, rootU);
-            rank.put(rootU, rank.get(rootU) + 1);
+            rank.put(rootU, rank.get(rootU) + 1); // Aumenta o rank da nova raiz
         }
     }
+
     
     public float calcDistance(T origem, T destino) {
         Vertice<T> verticeOrigem = obterVertice(origem);
@@ -351,6 +422,79 @@ private Vertice<T> findOrigem(Aresta<T> aresta, ArrayList<Vertice<T>> vertices) 
 
                 resultField.setText(resultado.toString());
  
+    }
+    
+    public String calcularAGMStr() {
+        ArrayList<Aresta<T>> arestas = new ArrayList<>();
+
+        for (Vertice<T> vertice : vertices) {
+            for (Aresta<T> aresta : vertice.getDestinos()) {
+                // Adiciona aresta à lista se ainda não foi adicionada
+                if (arestas.stream().noneMatch(a ->
+                    (a.getDestino().equals(aresta.getDestino()) && a.getPeso() == aresta.getPeso()) ||
+                    (a.getDestino().equals(vertice) && a.getPeso() == aresta.getPeso())
+                )) {
+                    arestas.add(aresta);
+                }
+            }
+        }
+
+        // Ordena as arestas pelo peso
+        Collections.sort(arestas, Comparator.comparingDouble(Aresta::getPeso));
+
+        // Inicializa o conjunto disjunto
+        Map<Vertice<T>, Vertice<T>> pai = new HashMap<>();
+        Map<Vertice<T>, Integer> rank = new HashMap<>();
+
+        // Inicializa os conjuntos disjuntos para cada vértice
+        for (Vertice<T> vertice : vertices) {
+            pai.put(vertice, vertice);
+            rank.put(vertice, 0);
+        }
+
+        // Calcula a árvore geradora mínima e constrói a string
+        StringBuilder resultado = new StringBuilder();
+        float somaTotal = 0;
+        resultado.append("Árvore Geradora Mínima:\n");
+
+        for (Aresta<T> aresta : arestas) {
+            Vertice<T> origem = findOrigem(aresta, vertices);
+            Vertice<T> destino = aresta.getDestino();
+
+            Vertice<T> u = find(origem, pai);
+            Vertice<T> v = find(destino, pai);
+
+            if (!u.equals(v)) {
+                resultado.append("Aresta: ")
+                         .append(origem.getValor())
+                         .append(" - ")
+                         .append(destino.getValor())
+                         .append(" - Peso: ")
+                         .append(aresta.getPeso())
+                         .append("\n");
+                somaTotal += aresta.getPeso();
+                union(u, v, pai, rank);
+            }
+        }
+
+        resultado.append("Soma total dos pesos: ")
+                 .append(somaTotal)
+                 .append("\n");
+
+        return resultado.toString();
+    }
+
+    public void calcMinRouteAGM(T origem, T destino, JTextArea resultField) {
+        // Cria o grafo da Árvore Geradora Mínima (AGM)
+        Grafo<T> grafoAGM = criarGrafoAGM();
+
+        // Usa o método calcMinRoute para calcular o caminho mínimo no grafo da AGM
+        try {
+            grafoAGM.calcMinRoute(origem, destino, resultField);
+        } catch (IllegalArgumentException e) {
+            // Exibe a mensagem de erro se as cidades não existirem ou não houver caminho
+            resultField.setText(e.getMessage());
+        }
     }
     
         // Verifica se o grafo está vazio.

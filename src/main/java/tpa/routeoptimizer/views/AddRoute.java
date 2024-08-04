@@ -26,7 +26,7 @@ public class AddRoute extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
 
         grapho = newGrafo;
-        ArrayList<String> cidades = grapho.obterVertices();
+        ArrayList<String> cidades = grapho.obterVerticesValues();
         
         for (String cidade : cidades) {
             originComboBox.addItem(cidade);

@@ -70,7 +70,7 @@
                       <Component id="jSeparator1" alignment="0" max="32767" attributes="0"/>
                       <Component id="calcDistButton" alignment="0" max="32767" attributes="0"/>
                       <Component id="calcAGMButton" alignment="0" max="32767" attributes="0"/>
-                      <Component id="calcNewAgm" alignment="0" max="32767" attributes="0"/>
+                      <Component id="calcDistanceAGM" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -88,11 +88,11 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="addRouteButton" min="-2" pref="47" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="calcAGMButton" min="-2" pref="48" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="calcDistButton" min="-2" pref="47" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="calcNewAgm" min="-2" pref="47" max="-2" attributes="0"/>
+                  <Component id="calcAGMButton" min="-2" pref="48" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="calcDistanceAGM" min="-2" pref="47" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -193,7 +193,7 @@
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="calcDistButtonMouseClicked"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="calcNewAgm">
+        <Component class="javax.swing.JButton" name="calcDistanceAGM">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" red="0" type="rgb"/>
@@ -204,10 +204,10 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Calcula Distancia"/>
+            <Property name="text" type="java.lang.String" value="Calcula Distancia AGM"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="calcNewAgmMouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="calcDistanceAGMMouseClicked"/>
           </Events>
         </Component>
       </SubComponents>

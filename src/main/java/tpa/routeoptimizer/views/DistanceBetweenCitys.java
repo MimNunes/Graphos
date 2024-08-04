@@ -27,7 +27,7 @@ public class DistanceBetweenCitys extends javax.swing.JFrame {
         
         grapho = newGrafo;
         
-        ArrayList<String> cidades = grapho.obterVertices();
+        ArrayList<String> cidades = grapho.obterVerticesValues();
         
         for (String cidade : cidades) {
             originComboBox.addItem(cidade);
